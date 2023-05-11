@@ -29,45 +29,38 @@ void display()
     }
     glPushMatrix();
         glScalef(0.3, 0.3, 0.3);
-        if(show[0])glmDraw(head, GLM_MATERIAL);
+        glPushMatrix();
+            glTranslatef(teapotX, teapotY, 0);
+            if(show[0])glmDraw(head, GLM_MATERIAL);
+        glPopMatrix();
         if(show[1])glmDraw(body, GLM_MATERIAL);
         if(show[2])glmDraw(uparm, GLM_MATERIAL);
         if(show[3])glmDraw(downarm, GLM_MATERIAL);
     glPopMatrix();
     glutSwapBuffers();
 }
+int oldX=0, oldY=0;
 void mouse(int button, int state, int x, int y)
 {
-    teapotX = (x-150)/150.0;
-    teapotY = (150-y)/150.0;
-    if(state==GLUT_DOWN){///如果mouse按下去
-        if(fout==NULL) fout = fopen("file4.txt", "w");
-
-        fprintf(fout, "%f %f\n", teapotX, teapotY);
+    if(state==GLUT_DOWN){
+        oldX = x;
+        oldY = y;
     }
-    display();
 }
-/*void keyboard(unsigned char key, int x, int y)
-{
-    if(fin==NULL){
-        fclose(fout);
-        fin = fopen("file4.txt", "r");
-    }
-    glPushMatrix();
-        glSalef(0.3,0.3,0.3);
-        if(key=='0') show[0] = ! show[0];
-        if(key=='1') show[1] = ! show[1];
-        if(key=='2') show[2] = ! show[2];
-        if(key=='3') show[3] = ! show[3];
-    fscanf(fin, "%f%f", &teapotX, &teapotY);
-    display();
-}*/
+void motion(int x, int y){
+    teapotX = (x-oldX)/150.0;
+    teapotY = (y-oldY)/150.0;
+    oldX = x;
+    oldY = y;
+    glutPostRedisplay();
+}
 int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("week12");
 
+    glutMotionFunc(motion);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
